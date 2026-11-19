@@ -1,0 +1,20 @@
+<%- include('partials/head') %>
+<section class="auth-card">
+  <h1>Staff login</h1>
+  <p class="muted">Sign in to the portal assigned to you.</p>
+  <% if (error) { %><div class="flash error"><%= error %></div><% } %>
+  <form method="post" action="/login" class="form">
+    <label>Portal
+      <select name="role" required>
+        <option value="">Select portal…</option>
+        <option value="frontdesk" <%= role === 'frontdesk' ? 'selected' : '' %>>Front Desk</option>
+        <option value="doctor" <%= role === 'doctor' ? 'selected' : '' %>>Doctor</option>
+        <option value="pharmacy" <%= role === 'pharmacy' ? 'selected' : '' %>>Pharmacy</option>
+      </select>
+    </label>
+    <label>Email <input type="email" name="email" required autocomplete="username"></label>
+    <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+</section>
+<%- include('partials/foot') %>

@@ -1,0 +1,74 @@
+<%- include('../partials/head') %>
+<h1>Consultation · <%= visit.first_name %> <%= visit.last_name %></h1>
+<p class="muted">DOB: <%= new Date(visit.dob).toLocaleDateString() %> · Sex: <%= visit.sex %> · Phone: <%= visit.phone %></p>
+
+<section class="card">
+  <h2>Clinical notes</h2>
+  <form method="post" action="/doctor/visits/<%= visit.id %>/save" class="form">
+    <label>Notes <textarea name="notes" rows="4"><%= visit.notes || '' %></textarea></label>
+    <label>Diagnosis <textarea name="diagnosis" rows="3"><%= visit.diagnosis || '' %></textarea></label>
+    <label>Treatment plan <textarea name="treatment_plan" rows="3"><%= visit.treatment_plan || '' %></textarea></label>
+    <button class="btn">Save consultation</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Prescription</h2>
+  <% if (!medicines.length) { %>
+    <p class="empty">No medicines in the pharmacy catalogue yet.</p>
+  <% } else { %>
+  <form method="post" action="/doctor/visits/<%= visit.id %>/prescription" class="form grid">
+    <label>Medicine
+      <select name="medicine_id" required>
+        <option value="">Select…</option>
+        <% medicines.forEach(m => { %>
+        <option value="<%= m.id %>" <%= m.stock_quantity === 0 ? 'disabled' : '' %>>
+          <%= m.name %> (<%= m.stock_quantity %> <%= m.unit %>)
+        </option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Dosage <input name="dosage" required placeholder="e.g. 1 tablet twice daily for 5 days"></label>
+    <label>Quantity <input type="number" name="quantity" min="1" required></label>
+    <div class="full"><button class="btn">Add to prescription</button></div>
+  </form>
+  <% } %>
+
+  <% if (items.length) { %>
+  <h3>Current prescription items</h3>
+  <table class="table">
+    <thead><tr><th>Medicine</th><th>Dosage</th><th>Qty</th></tr></thead>
+    <tbody>
+      <% items.forEach(i => { %>
+      <tr><td><%= i.name %></td><td><%= i.dosage %></td><td><%= i.quantity %></td></tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <p class="muted">Prescription is visible to the pharmacy now.</p>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Recent visit history</h2>
+  <% if (!history.length) { %><p class="empty">No earlier visits.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Started</th><th>Diagnosis</th><th>Status</th></tr></thead>
+    <tbody>
+      <% history.forEach(h => { %>
+      <tr>
+        <td><%= new Date(h.started_at).toLocaleDateString() %></td>
+        <td><%= h.diagnosis || '—' %></td>
+        <td><span class="badge <%= h.status %>"><%= h.status %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+
+<form method="post" action="/doctor/visits/<%= visit.id %>/complete">
+  <button class="btn accent" <%= visit.status === 'completed' ? 'disabled' : '' %>>
+    <%= visit.status === 'completed' ? 'Visit completed' : 'Mark visit complete' %>
+  </button>
+</form>
+<%- include('../partials/foot') %>

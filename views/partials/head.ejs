@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · I&M Hospital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">
+    <span class="logo">✚</span>
+    <span><strong>I&amp;M</strong> Hospital</span>
+  </a>
+  <% if (user) { %>
+    <nav class="nav">
+      <% if (user.role === 'frontdesk') { %>
+        <a href="/frontdesk">Dashboard</a>
+        <a href="/frontdesk/patients">Patients</a>
+        <a href="/frontdesk/appointments">Appointments</a>
+      <% } else if (user.role === 'doctor') { %>
+        <a href="/doctor">Dashboard</a>
+      <% } else if (user.role === 'pharmacy') { %>
+        <a href="/pharmacy">Dashboard</a>
+        <a href="/pharmacy/stock">Stock</a>
+      <% } %>
+      <span class="who"><%= user.name %> · <%= user.role %></span>
+      <form method="post" action="/logout" class="inline"><button class="link">Log out</button></form>
+    </nav>
+  <% } %>
+</header>
+<main class="container">
+  <% if (typeof flash !== 'undefined' && flash) { %>
+    <% flash.success.forEach(m => { %><div class="flash success"><%= m %></div><% }) %>
+    <% flash.error.forEach(m => { %><div class="flash error"><%= m %></div><% }) %>
+  <% } %>

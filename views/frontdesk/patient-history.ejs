@@ -1,0 +1,81 @@
+<%- include('../partials/head') %>
+<h1><%= patient.first_name %> <%= patient.last_name %></h1>
+<p class="muted">
+  DOB: <%= new Date(patient.dob).toLocaleDateString() %> · Sex: <%= patient.sex %> · Phone: <%= patient.phone %><%= patient.email ? ' · ' + patient.email : '' %>
+</p>
+
+<!-- Quick Medical Summary -->
+<div class="card" style="background: #f8fafb; display: flex; gap: 24px; flex-wrap: wrap; padding: 16px;">
+  <div><strong>Age:</strong> <%= patient.age || '—' %></div>
+  <div><strong>Blood Pressure:</strong> <span class="<%= patient.blood_pressure ? 'danger' : '' %>"><%= patient.blood_pressure || '—' %></span></div>
+  <div><strong>Weight:</strong> <%= patient.weight || '—' %></div>
+  <div><strong>Height:</strong> <%= patient.height || '—' %></div>
+  <div><strong>Allergies:</strong> <span class="<%= patient.allergies ? 'danger' : '' %>"><%= patient.allergies || 'None recorded' %></span></div>
+</div>
+
+<section class="card">
+  <h2>Update details</h2>
+  <form method="post" action="/frontdesk/patients/<%= patient.id %>" class="form grid">
+    <label>First name <input name="first_name" required value="<%= patient.first_name %>"></label>
+    <label>Last name <input name="last_name" required value="<%= patient.last_name %>"></label>
+    <label>Date of birth <input type="date" name="dob" required value="<%= patient.dob.toISOString().slice(0,10) %>"></label>
+    <label>Sex
+      <select name="sex">
+        <option value="M" <%= patient.sex==='M'?'selected':'' %>>M</option>
+        <option value="F" <%= patient.sex==='F'?'selected':'' %>>F</option>
+        <option value="O" <%= patient.sex==='O'?'selected':'' %>>Other</option>
+      </select>
+    </label>
+    <label>Phone <input name="phone" required value="<%= patient.phone %>"></label>
+    <label>Email <input type="email" name="email" value="<%= patient.email || '' %>"></label>
+    
+    <!-- New Medical Vitals Fields -->
+    <label>Age <input type="number" name="age" min="0" value="<%= patient.age || '' %>"></label>
+    <label>Weight <input name="weight" value="<%= patient.weight || '' %>"></label>
+    <label>Height <input name="height" value="<%= patient.height || '' %>"></label>
+    <label>Blood Pressure <input name="blood_pressure" value="<%= patient.blood_pressure || '' %>"></label>
+    <label class="full">Allergies <input name="allergies" value="<%= patient.allergies || '' %>"></label>
+
+    <label class="full">Address <input name="address" value="<%= patient.address || '' %>"></label>
+    <div class="full"><button class="btn">Save changes</button></div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Visit history</h2>
+  <% if (!visits.length) { %><p class="empty">No visits yet.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Started</th><th>Doctor</th><th>Diagnosis</th><th>Status</th></tr></thead>
+    <tbody>
+      <% visits.forEach(v => { %>
+      <tr>
+        <td><%= new Date(v.started_at).toLocaleString() %></td>
+        <td><%= v.doctor_name %></td>
+        <td><%= v.diagnosis || '—' %></td>
+        <td><span class="badge <%= v.status %>"><%= v.status %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Appointment history</h2>
+  <% if (!appts.length) { %><p class="empty">No appointments yet.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>When</th><th>Doctor</th><th>Reason</th><th>Status</th></tr></thead>
+    <tbody>
+      <% appts.forEach(a => { %>
+      <tr>
+        <td><%= new Date(a.scheduled_at).toLocaleString() %></td>
+        <td><%= a.doctor_name %></td>
+        <td><%= a.reason || '—' %></td>
+        <td><span class="badge <%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

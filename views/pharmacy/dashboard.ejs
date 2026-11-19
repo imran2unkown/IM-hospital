@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+<h1>Pharmacy Dashboard</h1>
+
+<section class="card">
+  <h2>Pending prescriptions</h2>
+  <% if (!rx.length) { %><p class="empty">No prescriptions waiting.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Received</th><th>Patient</th><th>Doctor</th><th>Items</th><th></th></tr></thead>
+    <tbody>
+      <% rx.forEach(r => { %>
+      <tr>
+        <td><%= new Date(r.created_at).toLocaleString() %></td>
+        <td><%= r.first_name %> <%= r.last_name %></td>
+        <td><%= r.doctor_name %></td>
+        <td><%= r.item_count %></td>
+        <td><a href="/pharmacy/prescriptions/<%= r.id %>">Review</a></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Low stock &amp; out of stock</h2>
+  <% if (!lowStock.length) { %><p class="empty">All medicines are above their thresholds.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Medicine</th><th>Stock</th><th>Threshold</th><th>Expires</th></tr></thead>
+    <tbody>
+      <% lowStock.forEach(m => { %>
+      <tr>
+        <td><%= m.name %></td>
+        <td class="<%= m.stock_quantity === 0 ? 'danger' : '' %>"><%= m.stock_quantity %> <%= m.unit %></td>
+        <td><%= m.low_stock_threshold %></td>
+        <td><%= new Date(m.expiry_date).toLocaleDateString() %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

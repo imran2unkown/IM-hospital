@@ -1,0 +1,46 @@
+<%- include('../partials/head') %>
+<h1>Doctor Dashboard</h1>
+<section class="card">
+  <h2>Patient queue</h2>
+  <% if (!queue.length) { %><p class="empty">No patients waiting.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>When</th><th>Patient</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <% queue.forEach(a => { %>
+      <tr>
+        <td><%= new Date(a.scheduled_at).toLocaleString() %></td>
+        <td><%= a.first_name %> <%= a.last_name %></td>
+        <td><%= a.reason || '—' %></td>
+        <td><span class="badge <%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+        <td>
+          <% if (a.status === 'checked_in') { %>
+          <form method="post" action="/doctor/queue/<%= a.id %>/start" class="inline">
+            <button class="btn small">Start consultation</button>
+          </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Upcoming / recent appointments</h2>
+  <% if (!upcoming.length) { %><p class="empty">No appointments scheduled.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>When</th><th>Patient</th><th>Status</th></tr></thead>
+    <tbody>
+      <% upcoming.forEach(a => { %>
+      <tr>
+        <td><%= new Date(a.scheduled_at).toLocaleString() %></td>
+        <td><%= a.first_name %> <%= a.last_name %></td>
+        <td><span class="badge <%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

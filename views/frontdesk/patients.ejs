@@ -1,0 +1,60 @@
+<%- include('../partials/head') %>
+<div class="page-head"><h1>Patients</h1></div>
+
+<form method="get" action="/frontdesk/patients" class="row">
+  <input name="q" value="<%= q %>" placeholder="Search by name, phone, or email…">
+  <button class="btn">Search</button>
+  <% if (q) { %><a class="btn ghost" href="/frontdesk/patients">Clear</a><% } %>
+</form>
+
+<details class="card" <%= errors ? 'open' : '' %>>
+  <summary><strong>Register new patient</strong></summary>
+  <% if (errors) { %><div class="flash error"><%= errors.join(' ') %></div><% } %>
+  
+  <form method="post" action="/frontdesk/patients" class="form grid">
+    <label>First name <input name="first_name" required value="<%= values.first_name || '' %>"></label>
+    <label>Last name <input name="last_name" required value="<%= values.last_name || '' %>"></label>
+    <label>Date of birth <input type="date" name="dob" required value="<%= values.dob || '' %>"></label>
+    <label>Sex
+      <select name="sex" required>
+        <option value="">…</option>
+        <option value="M" <%= values.sex==='M'?'selected':'' %>>M</option>
+        <option value="F" <%= values.sex==='F'?'selected':'' %>>F</option>
+        <option value="O" <%= values.sex==='O'?'selected':'' %>>Other</option>
+      </select>
+    </label>
+    <label>Phone <input name="phone" required value="<%= values.phone || '' %>"></label>
+    <label>Email <input type="email" name="email" value="<%= values.email || '' %>"></label>
+    
+    <!-- New Medical Vitals Fields -->
+    <label>Age <input type="number" name="age" min="0" value="<%= values.age || '' %>"></label>
+    <label>Weight <input name="weight" placeholder="e.g. 70kg" value="<%= values.weight || '' %>"></label>
+    <label>Height <input name="height" placeholder="e.g. 175cm" value="<%= values.height || '' %>"></label>
+    <label>Blood Pressure <input name="blood_pressure" placeholder="e.g. 120/80" value="<%= values.blood_pressure || '' %>"></label>
+    <label class="full">Allergies <input name="allergies" placeholder="e.g. Penicillin, Peanuts" value="<%= values.allergies || '' %>"></label>
+
+    <label class="full">Address <input name="address" value="<%= values.address || '' %>"></label>
+    <div class="full"><button class="btn">Register patient</button></div>
+  </form>
+</details>
+
+<section class="card">
+  <h2><%= q ? 'Search results' : 'Recently registered' %></h2>
+  <% if (!patients.length) { %><p class="empty">No patients found.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Name</th><th>DOB</th><th>Phone</th><th>Email</th><th></th></tr></thead>
+    <tbody>
+      <% patients.forEach(p => { %>
+      <tr>
+        <td><%= p.first_name %> <%= p.last_name %></td>
+        <td><%= new Date(p.dob).toLocaleDateString() %></td>
+        <td><%= p.phone %></td>
+        <td><%= p.email || '—' %></td>
+        <td><a href="/frontdesk/patients/<%= p.id %>/history">History</a></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

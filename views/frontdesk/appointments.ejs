@@ -1,0 +1,65 @@
+<%- include('../partials/head') %>
+<h1>Appointments</h1>
+
+<section class="card">
+  <h2>Book appointment</h2>
+  <% if (!patients.length || !doctors.length) { %>
+    <p class="empty">Register at least one patient and have a doctor account before booking.</p>
+  <% } else { %>
+  <form method="post" action="/frontdesk/appointments" class="form grid">
+    <label>Patient
+      <select name="patient_id" required>
+        <option value="">Select patient…</option>
+        <% patients.forEach(p => { %>
+          <option value="<%= p.id %>"><%= p.last_name %>, <%= p.first_name %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Doctor
+      <select name="doctor_id" required>
+        <option value="">Select doctor…</option>
+        <% doctors.forEach(d => { %><option value="<%= d.id %>"><%= d.full_name %></option><% }) %>
+      </select>
+    </label>
+    <label>Date &amp; time <input type="datetime-local" name="scheduled_at" required></label>
+    <label class="full">Reason <input name="reason"></label>
+    <div class="full"><button class="btn">Book</button></div>
+  </form>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>All appointments</h2>
+  <% if (!appts.length) { %><p class="empty">No appointments yet.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>When</th><th>Patient</th><th>Doctor</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      <% appts.forEach(a => { %>
+      <tr>
+        <td><%= new Date(a.scheduled_at).toLocaleString() %></td>
+        <td><%= a.first_name %> <%= a.last_name %></td>
+        <td><%= a.doctor_name %></td>
+        <td><span class="badge <%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+        <td class="actions">
+          <% if (a.status === 'booked') { %>
+            <form method="post" action="/frontdesk/appointments/<%= a.id %>/checkin" class="inline">
+              <button class="link">Check in</button>
+            </form>
+            <form method="post" action="/frontdesk/appointments/<%= a.id %>/cancel" class="inline">
+              <button class="link danger">Cancel</button>
+            </form>
+          <% } %>
+          <% if (['booked','checked_in'].includes(a.status)) { %>
+            <form method="post" action="/frontdesk/appointments/<%= a.id %>/reschedule" class="inline row-inline">
+              <input type="datetime-local" name="scheduled_at" required>
+              <button class="link">Reschedule</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

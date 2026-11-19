@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<h1>Medicine stock</h1>
+
+<section class="card">
+  <h2>Add medicine</h2>
+  <form method="post" action="/pharmacy/stock" class="form grid">
+    <label>Name <input name="name" required></label>
+    <label>Unit <input name="unit" placeholder="tablets" required></label>
+    <label>Quantity <input type="number" min="0" name="stock_quantity" required></label>
+    <label>Expiry <input type="date" name="expiry_date" required></label>
+    <label>Low stock threshold <input type="number" min="0" name="low_stock_threshold" value="20" required></label>
+    <div class="full"><button class="btn">Add medicine</button></div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Catalogue</h2>
+  <% if (!meds.length) { %><p class="empty">No medicines yet.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Unit</th><th>Qty</th><th>Expiry</th><th>Threshold</th><th></th></tr></thead>
+    <tbody>
+      <% meds.forEach(m => { %>
+      <tr>
+        <form method="post" action="/pharmacy/stock/<%= m.id %>">
+          <td><input name="name" value="<%= m.name %>" required></td>
+          <td><input name="unit" value="<%= m.unit %>" required></td>
+          <td class="<%= m.stock_quantity <= m.low_stock_threshold ? 'danger' : '' %>">
+            <input type="number" name="stock_quantity" value="<%= m.stock_quantity %>" min="0" required>
+          </td>
+          <td><input type="date" name="expiry_date" value="<%= m.expiry_date.toISOString().slice(0,10) %>" required></td>
+          <td><input type="number" name="low_stock_threshold" value="<%= m.low_stock_threshold %>" min="0" required></td>
+          <td><button class="link">Save</button></td>
+        </form>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

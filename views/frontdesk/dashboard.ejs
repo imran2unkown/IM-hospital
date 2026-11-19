@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<h1>Front Desk</h1>
+<div class="stat-grid">
+  <div class="stat"><span class="num"><%= totalPatients %></span><span>Total patients</span></div>
+  <div class="stat"><span class="num"><%= waiting %></span><span>Waiting now</span></div>
+  <div class="stat"><span class="num"><%= today.length %></span><span>Appointments today</span></div>
+</div>
+<section class="card">
+  <h2>Today’s appointments</h2>
+  <% if (!today.length) { %><p class="empty">No appointments booked for today.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th>Time</th><th>Patient</th><th>Status</th></tr></thead>
+    <tbody>
+      <% today.forEach(a => { %>
+      <tr>
+        <td><%= new Date(a.scheduled_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) %></td>
+        <td><%= a.first_name %> <%= a.last_name %></td>
+        <td><span class="badge <%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

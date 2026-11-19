@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<h1>Prescription #<%= rx.id %></h1>
+<p class="muted">Patient: <strong><%= rx.first_name %> <%= rx.last_name %></strong> · Doctor: <%= rx.doctor_name %> · Status: <span class="badge <%= rx.status %>"><%= rx.status %></span></p>
+
+<section class="card">
+  <h2>Items</h2>
+  <table class="table">
+    <thead><tr><th>Medicine</th><th>Dosage</th><th>Qty</th><th>In stock</th><th>Expires</th></tr></thead>
+    <tbody>
+      <% items.forEach(i => { %>
+      <tr>
+        <td><%= i.name %></td>
+        <td><%= i.dosage %></td>
+        <td><%= i.quantity %></td>
+        <td class="<%= i.stock_quantity < i.quantity ? 'danger' : '' %>"><%= i.stock_quantity %> <%= i.unit %></td>
+        <td><%= new Date(i.expiry_date).toLocaleDateString() %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <% if (rx.status === 'sent') { %>
+  <form method="post" action="/pharmacy/prescriptions/<%= rx.id %>/dispense">
+    <button class="btn">Dispense prescription</button>
+  </form>
+  <% } else { %>
+  <p class="muted">Dispensed <%= rx.dispensed_at ? new Date(rx.dispensed_at).toLocaleString() : '' %>.</p>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>
